@@ -14,9 +14,10 @@ class RSAUtils {
 
   //Singleton mode
   static RSAUtils getInstance(String publicKeyFile, String privateKeyFile) {
-    if (instance == null) {
-      instance = RSAUtils(publicKeyFile, privateKeyFile);
-    }
+    //if (instance == null) {
+    print("error in here?");
+    instance = RSAUtils(publicKeyFile, privateKeyFile);
+    //}
     return instance;
   }
 
@@ -53,6 +54,7 @@ class RSAUtils {
 
   ///RSA public key encryption
   Uint8List encryptByPublicKey(Uint8List data) {
+    print("do encryptByPublicKey");
     try {
       var keyParameter = () => PublicKeyParameter<RSAPublicKey>(publicKey);
       AsymmetricBlockCipher cipher = AsymmetricBlockCipher("RSA/PKCS1");
@@ -76,8 +78,8 @@ class RSAUtils {
           index += keysize;
         }
         Uint8List encryptResult = cipher.process(listtmp);
-        for (int v_i = 0; v_i < blocksize; v_i++) {
-          list[count * blocksize + v_i] = encryptResult[v_i];
+        for (int vI = 0; vI < blocksize; vI++) {
+          list[count * blocksize + vI] = encryptResult[vI];
         }
         count += 1;
       }
@@ -85,79 +87,81 @@ class RSAUtils {
     } catch (e) {
       print(e.toString());
     }
+    return Uint8List(0);
   }
 
-  ///RSA private key encryption
-  Uint8List encryptByPrivateKey(Uint8List data) {
-    try {
-      var keyParameter = () => PrivateKeyParameter<RSAPrivateKey>(privateKey);
-      AsymmetricBlockCipher cipher = AsymmetricBlockCipher("RSA/PKCS1");
-      cipher.reset();
-      cipher.init(true, keyParameter());
-      int index = 0;
-      int strlength = data.length;
-      final keysize = publicKey.modulus.bitLength ~/ 8 - 11;
-      final blocksize = publicKey.modulus.bitLength ~/ 8;
-      final numBlocks =
-          (strlength ~/ keysize) + ((strlength % keysize != 0) ? 1 : 0);
-      Uint8List list = Uint8List(blocksize * numBlocks);
-      int count = 0;
-      while (index < strlength) {
-        Uint8List listtmp;
-        if (index + keysize > strlength) {
-          listtmp = data.sublist(index, strlength);
-          index = strlength;
-        } else {
-          listtmp = data.sublist(index, index + keysize);
-          index += keysize;
-        }
-        Uint8List encryptResult = cipher.process(listtmp);
-        for (int v_i = 0; v_i < blocksize; v_i++) {
-          list[count * blocksize + v_i] = encryptResult[v_i];
-        }
-        count += 1;
-      }
-      return list;
-    } catch (e) {
-      print(e.toString());
-    }
-  }
+  // ///RSA private key encryption
+  // Uint8List encryptByPrivateKey(Uint8List data) {
+  //   try {
+  //     var keyParameter = () => PrivateKeyParameter<RSAPrivateKey>(privateKey);
+  //     AsymmetricBlockCipher cipher = AsymmetricBlockCipher("RSA/PKCS1");
+  //     cipher.reset();
+  //     cipher.init(true, keyParameter());
+  //     int index = 0;
+  //     int strlength = data.length;
+  //     final keysize = publicKey.modulus.bitLength ~/ 8 - 11;
+  //     final blocksize = publicKey.modulus.bitLength ~/ 8;
+  //     final numBlocks =
+  //         (strlength ~/ keysize) + ((strlength % keysize != 0) ? 1 : 0);
+  //     Uint8List list = Uint8List(blocksize * numBlocks);
+  //     int count = 0;
+  //     while (index < strlength) {
+  //       Uint8List listtmp;
+  //       if (index + keysize > strlength) {
+  //         listtmp = data.sublist(index, strlength);
+  //         index = strlength;
+  //       } else {
+  //         listtmp = data.sublist(index, index + keysize);
+  //         index += keysize;
+  //       }
+  //       Uint8List encryptResult = cipher.process(listtmp);
+  //       for (int v_i = 0; v_i < blocksize; v_i++) {
+  //         list[count * blocksize + v_i] = encryptResult[v_i];
+  //       }
+  //       count += 1;
+  //     }
+  //     return list;
+  //   } catch (e) {
+  //     print(e.toString());
+  //   }
+  // }
 
   ///RSA public key decryption
-  Uint8List decryptByPublicKey(Uint8List data) {
-    try {
-      var keyParameter = () => PublicKeyParameter<RSAPublicKey>(publicKey);
-      AsymmetricBlockCipher cipher = AsymmetricBlockCipher("RSA/PKCS1");
+  // Uint8List decryptByPublicKey(Uint8List data) {
+  //   try {
+  //     var keyParameter = () => PublicKeyParameter<RSAPublicKey>(publicKey);
+  //     AsymmetricBlockCipher cipher = AsymmetricBlockCipher("RSA/PKCS1");
 
-      cipher.reset();
-      cipher.init(false, keyParameter());
-      int index = 0;
-      int strlength = data.length;
-      final keysize = publicKey.modulus.bitLength ~/ 8 - 11;
-      final blocksize = publicKey.modulus.bitLength ~/ 8;
-      final numBlocks = strlength ~/ blocksize;
-      Uint8List list = Uint8List(keysize * numBlocks);
-      int count = 0;
-      int strindex = 0;
-      while (index < strlength) {
-        Uint8List listtmp =
-            data.sublist(count * blocksize, (count + 1) * blocksize);
-        Uint8List encryptResult = cipher.process(listtmp);
-        for (int v_i = 0; v_i < encryptResult.length; v_i++) {
-          list[count * keysize + v_i] = encryptResult[v_i];
-        }
-        count += 1;
-        strindex += encryptResult.length;
-        index += blocksize;
-      }
-      return list.sublist(0, strindex);
-    } catch (e) {
-      print(e.toString());
-    }
-  }
+  //     cipher.reset();
+  //     cipher.init(false, keyParameter());
+  //     int index = 0;
+  //     int strlength = data.length;
+  //     final keysize = publicKey.modulus.bitLength ~/ 8 - 11;
+  //     final blocksize = publicKey.modulus.bitLength ~/ 8;
+  //     final numBlocks = strlength ~/ blocksize;
+  //     Uint8List list = Uint8List(keysize * numBlocks);
+  //     int count = 0;
+  //     int strindex = 0;
+  //     while (index < strlength) {
+  //       Uint8List listtmp =
+  //           data.sublist(count * blocksize, (count + 1) * blocksize);
+  //       Uint8List encryptResult = cipher.process(listtmp);
+  //       for (int v_i = 0; v_i < encryptResult.length; v_i++) {
+  //         list[count * keysize + v_i] = encryptResult[v_i];
+  //       }
+  //       count += 1;
+  //       strindex += encryptResult.length;
+  //       index += blocksize;
+  //     }
+  //     return list.sublist(0, strindex);
+  //   } catch (e) {
+  //     print(e.toString());
+  //   }
+  // }
 
   ///RSA private key decryption
   Uint8List decryptByPrivateKey(Uint8List data) {
+    print("do decryptByPublicKey");
     try {
       var keyParameter = () => PrivateKeyParameter<RSAPrivateKey>(privateKey);
       AsymmetricBlockCipher cipher = AsymmetricBlockCipher("RSA/PKCS1");
@@ -186,6 +190,7 @@ class RSAUtils {
     } catch (e) {
       print(e.toString());
     }
+    return Uint8List(0);
   }
 
   static SecureRandom getSecureRandom() {
